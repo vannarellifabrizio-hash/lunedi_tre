@@ -110,7 +110,29 @@ function reducer(state: AppState, action: Action): AppState {
 
     case "RESET_ALL":
       return withOptionalSeed({ ...defaultState });
+      case "IMPORT_STATE": {
+  // Per sicurezza: quando importi, ti disautentico (così non rimani “loggato” con dati cambiati)
+  const incoming = action.value;
 
+  // Mini-sanitizzazione: se manca qualcosa, ripiega sui default
+  const safe: AppState = {
+    ...defaultState,
+    version: incoming.version ?? 1,
+    collaborators: Array.isArray(incoming.collaborators) ? incoming.collaborators : [],
+    projects: Array.isArray(incoming.projects) ? incoming.projects : [],
+    activities: Array.isArray(incoming.activities) ? incoming.activities : [],
+    ui: {
+      projectSortByName: !!incoming.ui?.projectSortByName
+    },
+    admin: { isAuthed: false },
+    dashboard: {
+      isAuthed: false,
+      filters: incoming.dashboard?.filters ?? { datePreset: "all", projectId: "all", collaboratorId: "all" }
+    }
+  };
+
+  return withOptionalSeed(safe);
+}
     default:
       return state;
   }
