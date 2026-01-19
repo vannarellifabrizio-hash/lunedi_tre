@@ -23,6 +23,7 @@ export default function AdminPage() {
   const [newPEnd, setNewPEnd] = useState("");
 
   const [confirm, setConfirm] = useState<{ open: boolean; kind: "collab" | "project"; id: string } | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
 
   const collaborators = useMemo(() => state.collaborators.slice().sort((a, b) => a.name.localeCompare(b.name)), [state.collaborators]);
 
