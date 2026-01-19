@@ -128,6 +128,86 @@ export default function AdminPage() {
         </div>
       </div>
 
+      <div className="card" style={{ marginTop: 12 }}>
+  <h3>Backup e ripristino</h3>
+  <p className="muted">
+    Puoi esportare tutti i dati in un file JSON e re-importarli quando vuoi (utile prima del passaggio online).
+  </p>
+
+  <div className="row" style={{ alignItems: "center" }}>
+    <button
+      className="btn primary"
+      onClick={() => {
+        setImportError(null);
+        const data = {
+          version: state.version,
+          collaborators: state.collaborators,
+          projects: state.projects,
+          activities: state.activities,
+          ui: state.ui,
+          // Nota: NON includo isAuthed true/false, per sicurezza
+          admin: { isAuthed: false },
+          dashboard: { isAuthed: false, filters: state.dashboard.filters }
+        };
+
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `backup-internal-tool-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }}
+    >
+      Esporta JSON
+    </button>
+
+    <label className="btn" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      Importa JSON
+      <input
+        type="file"
+        accept="application/json"
+        style={{ display: "none" }}
+        onChange={async (e) => {
+          setImportError(null);
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          try {
+            const text = await file.text();
+            const parsed = JSON.parse(text);
+
+            // Controlli minimi: devono esserci array
+            if (!parsed || !Array.isArray(parsed.collaborators) || !Array.isArray(parsed.projects) || !Array.isArray(parsed.activities)) {
+              throw new Error("Formato non valido: mancano collaborators/projects/activities.");
+            }
+
+            dispatch({ type: "IMPORT_STATE", value: parsed });
+
+            // reset input file così puoi reimportare lo stesso file se vuoi
+            e.target.value = "";
+            alert("Import completato ✅");
+          } catch (err: any) {
+            setImportError(err?.message ?? "Errore import.");
+            e.target.value = "";
+          }
+        }}
+      />
+    </label>
+  </div>
+
+  {importError ? (
+    <div style={{ color: "var(--danger)", marginTop: 10 }}>
+      Errore import: {importError}
+    </div>
+  ) : null}
+</div>
+
+
       <div className="grid-2" style={{ marginTop: 12 }}>
         <div className="card">
           <h2>Collaboratori</h2>
