@@ -20,7 +20,8 @@ type Action =
   | { type: "ACT_DELETE"; id: ID }
   | { type: "UI_PROJECT_SORT_TOGGLE" }
   | { type: "DASH_FILTERS_SET"; value: DashboardFilters }
-  | { type: "RESET_ALL" };
+  | { type: "RESET_ALL" }
+  | { type: "IMPORT_STATE"; value: AppState };
 
 const defaultState: AppState = {
   version: 1,
