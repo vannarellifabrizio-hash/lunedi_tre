@@ -46,8 +46,8 @@ const DASH_SALT  = "ZGFzaF9zYWx0XzIwMjY=";       // base64("dash_salt_2026")
 
 // These hashes were computed as sha256Base64(`${SALT}:${PASSWORD}`).
 // (Passwords are NOT in chiaro here.)
-export const ADMIN_HASH = "tB0cYwQ2udF05a20xU1WEdvHcyMEcP3wX5ZC9cJkEwE=";
-export const DASH_HASH  = "h1QKX9j8OiiDj2xuhP8Xv1r2E8zMabm5hYcf8yqYy48=";
+export const ADMIN_HASH = "bghQrMgUXmUu1O3doGeBIyQzlD2wVIEuMIdZHmO37g0=";
+export const DASH_HASH  = "LRIEIICT+K7c4jXybXppMEpCmjpupRo3+SwWogne9Is=";
 
 export async function verifyAdmin(password: string) {
   const h = await hashWithSaltBase64(ADMIN_SALT, password);
